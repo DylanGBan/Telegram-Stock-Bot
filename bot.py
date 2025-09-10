@@ -157,11 +157,11 @@ async def insight(update: Update, context: ContextTypes.DEFAULT_TYPE):
     ticker = context.args[0].upper().strip()
     col, val= stock.get_current_recommendation(ticker)
 
-    message = ['Anaylist Recommendation 🔍:\n']
+    message = [f'Anaylist Recommendation ({ticker}) 🔍 :\n']
     message.append('------------------------------\n')
     message.append(stock.get_recommendation(ticker))
     message.append('------------------------------\n')
-    message.append(f'⚠️ Recommendation -> {col}: {val}')
+    message.append(f'⚠️ Current Month Recommendation: ({col}: {val})')
 
     await update.message.reply_text(''.join(str(item) for item in message), parse_mode="Markdown")
 

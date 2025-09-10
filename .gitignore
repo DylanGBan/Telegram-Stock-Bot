@@ -1,0 +1,8 @@
+venv/
+__pycache__/
+.env
+*.db
+*.log
+morning.py 
+test.py 
+notes.txt

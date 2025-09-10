@@ -11,75 +11,9 @@ import zoneinfo
 
 load_dotenv()
 
-client_ai = OpenAI(os.environ.get("OPENAI_API_KEY"))
+client_ai = OpenAI()
+client_ai.api_key = os.environ.get("OPENAI_API_KEY")
 news_articles = {}
-
-
-#! for filtering out prem news:
-# free_article = False
-#         news = stock.news
-
-#         #checking and filtering out premium news
-#         while not free_article :
-#             newest_paper = max(news, key=lambda a: a['content']['pubDate'])
-
-#             prem_news = newest_paper.get("content").get("finance").get("premiumFinance").get("isPremiumNews")
-#             prem_news_for_free = newest_paper.get("content").get("finance").get("premiumFinance").get("isPremiumFreeNews")
-
-#             if prem_news and prem_news_for_free or not prem_news:
-#                 free_article = True
-#             else:
-#                 news.remove(newest_paper)
-
-
-
-# def stock_news(stock):
-#     urls = []
-#     full_news = ""
-
-#     news_info = []
-#     news = stock.news
-#     articles = news[:3]
-
-#     for article in articles:
-#         title = article.get("content").get("title")
-#         url = article.get("content").get("clickThroughUrl").get("url")
-#         urls.append(url)
-#         news_info.append(f"Title: {title} | URL: {url}\n")
-        
-#     full_news = ''.join(str(item) for item in news_info)
-
-#     return urls, full_news
-
-# def summarize_full_news(ticker):
-
-#     feedback = []
-
-#     stock = yf.Ticker(ticker)
-#     company_name = stock.info.get('longName', ticker)
-#     urls, full_news = stock_news(stock)
-
-#     for url in urls:
-#         article = Article(url)
-#         article.download()
-#         article.parse()
-#         content = article.text
-
-#         prompt = (
-#         f"Summarize the following news article in 2-3 sentences. "
-#         f"Then give stock impact prediction only on {company_name} (Positive, Negative, Neutral):\n\n{content}"
-#         f"The format should be: Summary: 'summary' | Predicition: 'predicition' "
-#         )
-
-#         response = client_ai.responses.create(
-#             model="gpt-4",
-#             input=[{"role": "user", "content": prompt}]
-#         )
-        
-#         feedback.append(response.output_text + "\n")
-#         feedback.append("\n")
-    
-#     return "".join(str(item) for item in feedback)
 
 def get_stock_longname(ticker):
     return yf.Ticker(ticker).info.get('longName', ticker)
@@ -102,7 +36,7 @@ def get_recommendation(ticker):
     data = pd.DataFrame(stock.recommendations_summary)
     data = data.drop('period', axis=1)
     data = data.rename(columns={'strongBuy':'Strong Buy', 'buy':'Buy', 'hold':'Hold', 'sell':'Sell', 'strongSell':'Strong Sell'})
-    data.index = ['Current Month', '1 Month Ago', '2 Months Ago']
+    data.index = ['Current Month', '1 Month Ago', '2 Months Ago', '3 Months Ago']
 
     lines = []
     for idx, row in data.iterrows():
@@ -119,12 +53,12 @@ def get_current_recommendation(ticker):
     data = pd.DataFrame(stock.recommendations_summary)
     data = data.drop('period', axis=1)
     data = data.rename(columns={'strongBuy':'Strong Buy', 'buy':'Buy', 'hold':'Hold', 'sell':'Sell', 'strongSell':'Strong Sell'})
-    data.index = ['Current Month', '1 Month Ago', '2 Months Ago']
+    data.index = ['Current Month', '1 Month Ago', '2 Months Ago', '3 Months Ago']
 
     row = data.iloc[[0]]
     row_series = row.iloc[0]
 
-    max_col = row_series.idxmax() 
+    max_col = row_series.idxmax()
     max_val = row_series.max()   
 
     return max_col, str(max_val)
@@ -253,22 +187,3 @@ def summarize_stock(ticker):
         f"Prev. Close: {stock.fast_info['regularMarketPreviousClose']}\n"
         f"Current Date & 24-Time: {current_day_info}"
         )
-    
-def hot_stock():
-        
-    feedback = []
-    prompt = (
-    f"Summarize the following news article in 2-3 sentences. "
-    f"Then give stock impact prediction only on {company_name} (Positive, Negative, Neutral):\n\n{content}"
-    f"The format should be: Summary: 'summary' | Predicition: 'predicition' "
-    )
-
-    response = client_ai.responses.create(
-        model="gpt-4",
-        input=[{"role": "user", "content": prompt}]
-    )
-        
-    feedback.append(response.output_text + "\n")
-    feedback.append("\n")
-
-    return feedback
