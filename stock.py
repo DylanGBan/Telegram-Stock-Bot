@@ -2,12 +2,10 @@ from openai import OpenAI
 from time import gmtime, strftime
 from dotenv import load_dotenv
 from newspaper import Article
-from datetime import datetime
 import yfinance as yf
 import pandas as pd
 import os
 import logging
-import zoneinfo 
 
 load_dotenv()
 

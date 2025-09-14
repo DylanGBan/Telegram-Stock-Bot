@@ -1,9 +1,8 @@
 from telegram import Update, Bot
-from telegram.ext import Application, CommandHandler, MessageHandler, ContextTypes, filters, ConversationHandler
+from telegram.ext import Application, CommandHandler, ContextTypes
 from dotenv import load_dotenv
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from time import gmtime, strftime
 from datetime import datetime
 import stock
 import Data
